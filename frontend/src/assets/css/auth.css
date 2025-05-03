@@ -1,128 +1,222 @@
+/* Estilos para as páginas de autenticação */
 .auth-container {
-    background-color: var(--dark-blue);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-  }
-  
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--dark-blue);
+  padding: 2rem;
+  background-image: 
+    radial-gradient(var(--pill-white) 2px, transparent 2px),
+    radial-gradient(var(--pill-white) 2px, transparent 2px);
+  background-size: 50px 50px;
+  background-position: 0 0, 25px 25px;
+  background-attachment: fixed;
+  opacity: 0.97;
+}
+
+.auth-form-container {
+  background-color: rgba(0, 0, 80, 0.8);
+  padding: 2rem;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--pacman-yellow);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+  color: var(--pacman-yellow);
+  margin-bottom: 1rem;
+}
+
+.auth-image-container {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-image-container img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.auth-form-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--ghost-blue);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: var(--text-white);
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--pacman-yellow);
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.auth-submit-btn {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--pacman-yellow);
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-submit-btn:hover:not([disabled]) {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: rgba(255, 0, 0, 0.2);
+  border-left: 4px solid red;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-white);
+  border-radius: 5px;
+}
+
+.success-message {
+  background-color: rgba(0, 255, 0, 0.2);
+  border-left: 4px solid green;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-white);
+  border-radius: 5px;
+}
+
+.auth-links {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--text-white);
+}
+
+.auth-links a {
+  color: var(--pacman-yellow);
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
   .auth-form-container {
-    background-color: rgba(0, 0, 80, 0.8);
-    padding: 2rem;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    border: 2px solid var(--pacman-yellow);
+    padding: 1.5rem;
+    max-width: 100%;
   }
-  
-  .auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
+}
+
+/* Adicione essas regras ao final do arquivo auth.css */
+
+/* Layout em grid para formulários */
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem; /* Aumentar o espaçamento entre colunas */
+}
+
+/* Estilização para feedback de validação de senha */
+.password-requirements {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 0.5rem;
+}
+
+.password-requirements ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 0.3rem;
+}
+
+.password-requirements li {
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.password-requirements li::before {
+  content: "•";
+  color: #aaa;
+  display: inline-block;
+  width: 1em;
+  margin-right: 0.5em;
+}
+
+.password-requirements li.valid::before {
+  content: "✓";
+  color: green;
+}
+
+.password-requirements li.invalid::before {
+  content: "×";
+  color: red;
+}
+
+/* Estilização para campo de telefone */
+
+.phone-input-container {
+  display: block; /* Alterado de flex para block */
+  width: 100%;
+}
+
+.phone-input-container input {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .two-columns {
+    grid-template-columns: 1fr;
   }
-  
-  .auth-header h1 {
-    color: var(--pacman-yellow);
-    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .two-columns {
+    grid-template-columns: 1fr;
   }
-  
-  .auth-image-container {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto;
-  }
-  
-  .auth-form-container h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--ghost-blue);
-  }
-  
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .form-group label {
-    color: var(--text-white);
-    font-weight: bold;
-  }
-  
-  .form-group input {
-    padding: 0.8rem;
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-white);
-    transition: all 0.3s ease;
-  }
-  
-  .form-group input:focus {
-    outline: none;
-    border-color: var(--pacman-yellow);
-    background-color: rgba(255, 255, 255, 0.15);
-  }
-  
-  .auth-submit-btn {
-    margin-top: 1rem;
-    padding: 1rem;
-    background-color: var(--pacman-yellow);
-    color: var(--dark-blue);
-    border: none;
-    border-radius: 30px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .auth-submit-btn:hover:not([disabled]) {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
-  }
-  
-  .auth-submit-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  .error-message {
-    background-color: rgba(255, 0, 0, 0.2);
-    border-left: 4px solid red;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text-white);
-    border-radius: 5px;
-  }
-  
-  .auth-links {
-    margin-top: 1.5rem;
-    text-align: center;
-    color: var(--text-white);
-  }
-  
-  .auth-links a {
-    color: var(--pacman-yellow);
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease;
-  }
-  
-  .auth-links a:hover {
-    text-decoration: underline;
-  }
-  
-  @media (max-width: 768px) {
-    .auth-form-container {
-      padding: 1.5rem;
-      max-width: 100%;
-    }
-  }
+}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import '../assets/css/auth.css'; // Vamos criar este CSS em seguida
+import '../assets/css/auth.css';
+import pacManGif from '../assets/images/pac-man.gif';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const LoginPage: React.FC = () => {
         <div className="auth-header">
           <h1>Pac-Poupança</h1>
           <div className="auth-image-container">
-            {/* Espaço para o mesmo GIF da página principal */}
+            <img src="/assets/images/pac-man.gif" alt="Pac-Poupança Animation" />
           </div>
         </div>
         

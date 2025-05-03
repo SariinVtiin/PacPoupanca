@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   
-  // Adicionar o comportamento dos cards quando o componente montar
+  // Efeito para configurar os comportamentos dos componentes
   useEffect(() => {
     const cards = document.querySelectorAll('.feature-card');
     cards.forEach(card => {
@@ -17,48 +19,33 @@ const LandingPage: React.FC = () => {
       });
     });
     
-    // Adicionar eventos aos botões
-    const loginBtn = document.querySelector('.login-btn');
-    const ctaBtns = document.querySelectorAll('.cta-btn');
-    
-    if (loginBtn) {
-      loginBtn.addEventListener('click', function() {
-        alert('Redirecionando para a página de login...');
-      });
-    }
-    
-    if (ctaBtns.length > 0) {
-      ctaBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-          alert('Vamos começar a jornada de economia!');
-        });
-      });
-    }
-    
-    // Cleanup para remover os event listeners ao desmontar o componente
+    // Cleanup function para remover event listeners
     return () => {
       cards.forEach(card => {
-        card.removeEventListener('mouseenter', function(this: HTMLElement) {
-          this.style.transform = 'translateY(-10px)';
-          this.style.borderColor = 'var(--pacman-yellow)';
-        });
-        
-        card.removeEventListener('mouseleave', function(this: HTMLElement) {
-          this.style.transform = 'translateY(0)';
-          this.style.borderColor = 'transparent';
-        });
+        card.removeEventListener('mouseenter', function() {});
+        card.removeEventListener('mouseleave', function() {});
       });
     };
   }, []);
   
+  // Funções de navegação
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+  
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+  
   return (
+
     <>
       {/* Header com botão de login no canto superior direito */}
       <header>
         <div className="logo">
           <h1>Pac-Poupança</h1>
         </div>
-        <button className="login-btn">Entrar</button>
+        <button className="login-btn" onClick={handleLoginClick}>Entrar</button>
       </header>
       
       {/* Seção Hero */}
@@ -69,13 +56,12 @@ const LandingPage: React.FC = () => {
         <div className="ghost"></div>
         
         <div className="hero-content">
-          {/* Espaço para importar um GIF */}
           <div className="hero-image-container">
             <img src="/assets/images/pac-man.gif" alt="Pac-Poupança Animation" />
           </div>
           <h2>Transforme suas finanças em diversão</h2>
           <p>O Pac-Poupança une o universo dos videogames e a educação financeira. Assuma o papel do herói e "devore" os gastos desnecessários enquanto coleta as preciosas "pílulas da economia". Aprenda a controlar suas finanças de forma divertida e estratégica.</p>
-          <button className="cta-btn">Comece a poupar agora</button>
+          <button className="cta-btn" onClick={handleRegisterClick}>Comece a poupar agora</button>
         </div>
       </section>
       
@@ -162,7 +148,7 @@ const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer>
         <div className="footer-logo">Pac-Poupança</div>
-        <button className="cta-btn">Comece sua jornada financeira</button>
+        <button className="cta-btn" onClick={handleRegisterClick}>Comece sua jornada financeira</button>
         <p>© 2025 Pac-Poupança. Transformando finanças em diversão.</p>
       </footer>
     </>

@@ -27,13 +27,19 @@ def register():
     if User.query.filter_by(email=data['email']).first():
         return jsonify({'error': 'Email já está em uso'}), 400
     
+    # Formatar a data de nascimento
+    try:
+        birth_date = datetime.datetime.strptime(data['birth_date'], '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': 'Formato de data inválido. Use YYYY-MM-DD'}), 400
+    
     # Criar novo usuário
     new_user = User(
         username=data['username'],
         email=data['email'],
         phone=data['phone'],
         full_name=data['full_name'],
-        birth_date=data['birth_date']
+        birth_date=birth_date
     )
     new_user.set_password(data['password'])
     
