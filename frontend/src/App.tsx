@@ -4,9 +4,7 @@ import './index.css';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
-// Importaremos o Dashboard quando o criarmos
-// import DashboardPage from './pages/DashboardPage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   // Verificar se o usuário está autenticado
@@ -14,7 +12,7 @@ function App() {
     return localStorage.getItem('token') !== null;
   };
 
-  // Componente para rotas privadas (será usado quando tivermos o DashboardPage)
+  // Componente para rotas privadas
   const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
   };
@@ -25,7 +23,6 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        {/* Adicionaremos a rota do Dashboard posteriormente
         <Route 
           path="/dashboard" 
           element={
@@ -33,7 +30,9 @@ function App() {
               <DashboardPage />
             </PrivateRoute>
           } 
-        /> */}
+        />
+        {/* Redirecionar qualquer rota desconhecida para a página inicial */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

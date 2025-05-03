@@ -220,3 +220,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Adicionar ao final do arquivo auth.css */
+.auth-image-container {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.auth-image-container:hover {
+  transform: scale(1.1);
+}
+
+.auth-image-container:active {
+  transform: scale(0.95);
+}

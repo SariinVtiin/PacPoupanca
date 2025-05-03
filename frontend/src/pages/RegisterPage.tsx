@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authService } from '../services/api';
 import axios from 'axios';
 import '../assets/css/auth.css';
 
@@ -116,7 +117,7 @@ const RegisterPage: React.FC = () => {
       // Remover o campo confirm_password antes de enviar
       const { confirm_password, ...dataToSend } = formData;
       
-      await axios.post('http://localhost:5000/api/register', dataToSend);
+      await authService.register(dataToSend);
       
       // Após o registro bem-sucedido, mostrar mensagem de sucesso
       setSuccess('Registro realizado com sucesso! Redirecionando para o login...');
@@ -126,11 +127,19 @@ const RegisterPage: React.FC = () => {
         navigate('/login');
       }, 2000);
       
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Erro ao fazer cadastro. Tente novamente.');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data.error || 'Erro ao fazer cadastro. Tente novamente.');
+      } else {
+        setError('Erro ao conectar ao servidor. Verifique sua conexão.');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBackToHome = () => {
+    navigate('/');
   };
 
   return (
@@ -138,7 +147,12 @@ const RegisterPage: React.FC = () => {
       <div className="auth-form-container">
         <div className="auth-header">
           <h1>Pac-Poupança</h1>
-          <div className="auth-image-container">
+          <div 
+            className="auth-image-container" 
+            onClick={handleBackToHome}
+            style={{ cursor: 'pointer' }} // Adicionar cursor pointer para indicar que é clicável
+            title="Voltar para a página inicial" // Adicionar tooltip
+          >
             <img src="/assets/images/pac-man.gif" alt="Pac-Poupança Animation" />
           </div>
         </div>

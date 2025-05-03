@@ -1,256 +1,227 @@
+/* Estilos para o Dashboard */
 .dashboard-container {
-    min-height: 100vh;
-    background-color: var(--dark-blue);
+  min-height: 100vh;
+  background-color: var(--dark-blue);
+  color: var(--text-white);
+}
+
+.dashboard-header {
+  background-color: rgba(0, 0, 51, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-header .logo h1 {
+  color: var(--pacman-yellow);
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logout-btn {
+  background-color: var(--ghost-red);
+  color: var(--text-white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  transform: scale(1.05);
+  background-color: darkred;
+}
+
+.dashboard-main {
+  display: flex;
+  min-height: calc(100vh - 64px);
+}
+
+.sidebar {
+  width: 250px;
+  background-color: rgba(0, 0, 80, 0.7);
+  padding-top: 2rem;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar nav ul li {
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.sidebar nav ul li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-color: var(--ghost-blue);
+}
+
+.sidebar nav ul li.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-color: var(--pacman-yellow);
+  font-weight: bold;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #000022;
+  overflow-y: auto;
+}
+
+.main-content h1 {
+  color: var(--pacman-yellow);
+  margin-bottom: 2rem;
+}
+
+.welcome-card {
+  background-color: rgba(0, 0, 80, 0.6);
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  border: 2px solid var(--pacman-yellow);
+}
+
+.welcome-card h2 {
+  color: var(--ghost-blue);
+  margin-bottom: 1rem;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: rgba(0, 0, 80, 0.6);
+  padding: 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  border-bottom: 5px solid;
+}
+
+.stat-card:nth-child(1) {
+  border-bottom-color: var(--ghost-blue);
+}
+
+.stat-card:nth-child(2) {
+  border-bottom-color: var(--pacman-yellow);
+}
+
+.stat-card:nth-child(3) {
+  border-bottom-color: var(--ghost-red);
+}
+
+.stat-card h3 {
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.user-profile-card {
+  background-color: rgba(0, 0, 80, 0.6);
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  border: 2px solid var(--ghost-pink);
+}
+
+.user-profile-card h3 {
+  color: var(--ghost-pink);
+  margin-bottom: 1.5rem;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.profile-details p {
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-loading {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--dark-blue);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 204, 0, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--pacman-yellow);
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .dashboard-header {
-    background-color: rgba(0, 0, 51, 0.9);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  }
-  
-  .dashboard-header .logo h1 {
-    color: var(--pacman-yellow);
-    font-size: 1.5rem;
-    margin: 0;
-  }
-  
-  .user-menu {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: var(--text-white);
-  }
-  
-  .logout-btn {
-    background-color: var(--ghost-red);
-    color: var(--text-white);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .logout-btn:hover {
-    transform: scale(1.05);
-    background-color: darkred;
-  }
-  
+}
+
+@media (max-width: 768px) {
   .dashboard-main {
-    display: flex;
-    min-height: calc(100vh - 72px);
+    flex-direction: column;
   }
   
   .sidebar {
-    width: 250px;
-    background-color: rgba(0, 0, 80, 0.7);
-    padding: 2rem 0;
+    width: 100%;
+    padding: 0.5rem 0;
   }
   
   .sidebar nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    display: flex;
+    overflow-x: auto;
   }
   
   .sidebar nav ul li {
-    padding: 1rem 2rem;
-    color: var(--text-white);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-  }
-  
-  .sidebar nav ul li:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-left-color: var(--ghost-blue);
+    padding: 1rem;
+    border-left: none;
+    border-bottom: 4px solid transparent;
   }
   
   .sidebar nav ul li.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left-color: var(--pacman-yellow);
-    font-weight: bold;
-  }
-  
-  .main-content {
-    flex: 1;
-    padding: 2rem;
-    background-color: #000022;
-  }
-  
-  .main-content h1 {
-    color: var(--pacman-yellow);
-    margin-bottom: 2rem;
-  }
-  
-  .welcome-card {
-    background-color: rgba(0, 0, 80, 0.6);
-    padding: 2rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    border: 2px solid var(--pacman-yellow);
-  }
-  
-  .welcome-card h2 {
-    color: var(--ghost-blue);
-    margin-bottom: 1rem;
-  }
-  
-  .maze-placeholder {
-    background-color: rgba(0, 0, 80, 0.6);
-    padding: 3rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    border: 2px dashed var(--maze-blue);
-    text-align: center;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .maze-placeholder h3 {
-    color: var(--ghost-pink);
-    margin-bottom: 1rem;
-  }
-  
-  .dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .stat-card {
-    background-color: rgba(0, 0, 80, 0.6);
-    padding: 1.5rem;
-    border-radius: 15px;
-    text-align: center;
-    border-bottom: 5px solid;
-  }
-  
-  .stat-card:nth-child(1) {
-    border-bottom-color: var(--ghost-blue);
-  }
-  
-  .stat-card:nth-child(2) {
+    border-left-color: transparent;
     border-bottom-color: var(--pacman-yellow);
   }
   
-  .stat-card:nth-child(3) {
-    border-bottom-color: var(--ghost-red);
+  .sidebar nav ul li:hover {
+    border-left-color: transparent;
+    border-bottom-color: var(--ghost-blue);
   }
   
-  .stat-card h3 {
-    margin-bottom: 1rem;
-    color: var(--text-white);
+  .dashboard-stats {
+    grid-template-columns: 1fr;
   }
   
-  .stat-value {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--text-white);
+  .profile-details {
+    grid-template-columns: 1fr;
   }
-  
-  .upcoming-challenges h3 {
-    color: var(--pacman-yellow);
-    margin-bottom: 1rem;
-  }
-  
-  .challenge-card {
-    background-color: rgba(0, 0, 80, 0.6);
-    padding: 1.5rem;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-    transition: transform 0.3s ease;
-    border: 2px solid transparent;
-  }
-  
-  .challenge-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--pacman-yellow);
-  }
-  
-  .challenge-icon {
-    font-size: 2rem;
-    background-color: rgba(255, 204, 0, 0.1);
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .challenge-details {
-    flex: 1;
-  }
-  
-  .challenge-details h4 {
-    color: var(--ghost-blue);
-    margin-bottom: 0.5rem;
-  }
-  
-  .complete-btn {
-    background-color: var(--pacman-yellow);
-    color: var(--dark-blue);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .complete-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
-  }
-  
-  .dashboard-loading {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-    color: var(--pacman-yellow);
-    background-color: var(--dark-blue);
-  }
-  
-  @media (max-width: 768px) {
-    .dashboard-main {
-      flex-direction: column;
-    }
-    
-    .sidebar {
-      width: 100%;
-      padding: 1rem 0;
-    }
-    
-    .main-content {
-      padding: 1.5rem;
-    }
-    
-    .dashboard-stats {
-      grid-template-columns: 1fr;
-    }
-    
-    .challenge-card {
-      flex-direction: column;
-      text-align: center;
-      padding: 1rem;
-    }
-    
-    .challenge-details {
-      margin-bottom: 1rem;
-    }
-  }
+}

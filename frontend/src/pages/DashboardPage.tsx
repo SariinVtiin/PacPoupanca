@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/api';
 import axios from 'axios';
-import '../assets/css/dashboard.css'; // Vamos criar este CSS em seguida
+import '../assets/css/dashboard.css';
 
 interface UserProfile {
   id: number;
@@ -10,6 +11,8 @@ interface UserProfile {
   full_name: string;
   phone: string;
   birth_date: string;
+  created_at: string;
+  last_login: string | null;
 }
 
 const DashboardPage: React.FC = () => {
@@ -19,6 +22,7 @@ const DashboardPage: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Buscar dados do perfil do usuário ao carregar o componente
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -27,39 +31,33 @@ const DashboardPage: React.FC = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/api/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        setUserProfile(response.data);
-      } catch (error: any) {
+        const data = await authService.getProfile();
+        setUserProfile(data);
+        setLoading(false);
+      } catch (error) {
         console.error('Erro ao carregar perfil:', error);
         setError('Erro ao carregar informações do usuário');
-        
-        // Se for erro de autenticação, redirecionar para login
-        if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          navigate('/login');
-        }
-      } finally {
         setLoading(false);
       }
     };
 
     fetchUserProfile();
   }, [navigate]);
-
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('username');
-    navigate('/login');
+    navigate('/');
   };
 
   if (loading) {
-    return <div className="dashboard-loading">Carregando...</div>;
+    return (
+      <div className="dashboard-loading">
+        <div className="loading-spinner"></div>
+        <p>Carregando seu dashboard...</p>
+      </div>
+    );
   }
 
   return (
@@ -69,7 +67,7 @@ const DashboardPage: React.FC = () => {
           <h1>Pac-Poupança</h1>
         </div>
         <div className="user-menu">
-          <span>Olá, {userProfile?.username}!</span>
+          <span>Olá, {userProfile?.username || 'Usuário'}!</span>
           <button onClick={handleLogout} className="logout-btn">Sair</button>
         </div>
       </header>
@@ -96,11 +94,6 @@ const DashboardPage: React.FC = () => {
             <p>Aqui você poderá visualizar seus gastos, economias e conquistar desafios.</p>
           </div>
           
-          <div className="maze-placeholder">
-            <h3>Seu labirinto financeiro será exibido aqui</h3>
-            <p>Em breve você poderá visualizar todos os seus dados de forma gamificada!</p>
-          </div>
-          
           <div className="dashboard-stats">
             <div className="stat-card">
               <h3>Saldo Atual</h3>
@@ -118,16 +111,18 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
           
-          <div className="upcoming-challenges">
-            <h3>Desafios do Dia</h3>
-            <div className="challenge-card">
-              <div className="challenge-icon">🎮</div>
-              <div className="challenge-details">
-                <h4>Registre todas as suas despesas hoje</h4>
-                <p>Complete para ganhar uma medalha de "Organização Financeira"</p>
+          <div className="user-profile-card">
+            <h3>Seu Perfil</h3>
+            {userProfile && (
+              <div className="profile-details">
+                <p><strong>Nome:</strong> {userProfile.full_name}</p>
+                <p><strong>Email:</strong> {userProfile.email}</p>
+                <p><strong>Telefone:</strong> {userProfile.phone}</p>
+                <p><strong>Data de Nascimento:</strong> {userProfile.birth_date}</p>
+                <p><strong>Conta criada em:</strong> {userProfile.created_at}</p>
+                <p><strong>Último login:</strong> {userProfile.last_login || 'Esta é sua primeira vez'}</p>
               </div>
-              <button className="complete-btn">Completar</button>
-            </div>
+            )}
           </div>
         </div>
       </div>

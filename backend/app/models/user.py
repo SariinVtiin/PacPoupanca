@@ -13,12 +13,30 @@ class User(db.Model):
     full_name = db.Column(db.String(100), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime, nullable=True)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def update_last_login(self):
+        self.last_login = datetime.utcnow()
+        db.session.commit()
+    
+    def to_dict(self):
+        """Converter o usuário para um dicionário (útil para API)"""
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'phone': self.phone,
+            'full_name': self.full_name,
+            'birth_date': self.birth_date.strftime('%Y-%m-%d'),
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'last_login': self.last_login.strftime('%Y-%m-%d %H:%M:%S') if self.last_login else None
+        }
         
     def __repr__(self):
         return f'<User {self.username}>'

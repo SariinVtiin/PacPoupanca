@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authService } from '../services/api';
 import axios from 'axios';
 import '../assets/css/auth.css';
-import pacManGif from '../assets/images/pac-man.gif';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -27,20 +27,29 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', formData);
+      // Chamar a API de login
+      const data = await authService.login(formData.username, formData.password);
       
       // Armazenar o token e informações do usuário
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('userId', response.data.user_id);
-      localStorage.setItem('username', response.data.username);
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('userId', data.user_id.toString());
+      localStorage.setItem('username', data.username);
       
       // Redirecionar para o dashboard
       navigate('/dashboard');
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Erro ao fazer login. Tente novamente.');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data.error || 'Erro ao fazer login. Tente novamente.');
+      } else {
+        setError('Erro ao conectar ao servidor. Verifique sua conexão.');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBackToHome = () => {
+    navigate('/');
   };
 
   return (
@@ -48,9 +57,15 @@ const LoginPage: React.FC = () => {
       <div className="auth-form-container">
         <div className="auth-header">
           <h1>Pac-Poupança</h1>
-          <div className="auth-image-container">
+          <div 
+            className="auth-image-container" 
+            onClick={handleBackToHome}
+            style={{ cursor: 'pointer' }} // Adicionar cursor pointer para indicar que é clicável
+            title="Voltar para a página inicial" // Adicionar tooltip
+          >
             <img src="/assets/images/pac-man.gif" alt="Pac-Poupança Animation" />
-          </div>
+        
+        </div>
         </div>
         
         <h2>Login</h2>
