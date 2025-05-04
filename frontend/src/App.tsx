@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import TransactionsPage from './pages/TransactionsPage';
 
 function App() {
   // Verificar se o usuário está autenticado
@@ -28,6 +29,14 @@ function App() {
           element={
             <PrivateRoute>
               <DashboardPage />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/transactions" 
+          element={
+            <PrivateRoute>
+              <TransactionsPage />
             </PrivateRoute>
           } 
         />

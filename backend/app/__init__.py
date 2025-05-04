@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
@@ -30,25 +30,75 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'dev_jwt_secret_key')
     
     # Inicializar extensões
+    jwt = JWTManager(app)
     db.init_app(app)
-    JWTManager(app)
-    
-    # Configurar CORS adequadamente
     CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
     
+    # Adicione manipuladores de erro JWT
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error_string):
+        return jsonify({
+            'message': 'Token inválido',
+            'error': error_string
+        }), 422
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return jsonify({
+            'message': 'Token expirado',
+            'error': 'token_expired'
+        }), 401
+
+    @jwt.unauthorized_loader
+    def unauthorized_callback(error_string):
+        return jsonify({
+            'message': 'Token ausente',
+            'error': error_string
+        }), 401
+
     # Importação para garantir que os modelos sejam registrados
     with app.app_context():
         from app.models.user import User
+        from app.models.transaction import Transaction, TransactionCategory
         
         # Registrar blueprints
         from app.api.routes import api as api_blueprint
-        app.register_blueprint(api_blueprint, url_prefix='/api')
+        from app.api.transaction_routes import transaction_api as transaction_api_blueprint
         
+        app.register_blueprint(api_blueprint, url_prefix='/api')
+        app.register_blueprint(transaction_api_blueprint, url_prefix='/api')
+
         try:
             # Criar tabelas se não existirem
             db.create_all()
             print("Tabelas criadas com sucesso!")
             
+            default_categories = [
+                {'name': 'Salário', 'type': 'income', 'description': 'Rendimentos do trabalho', 'icon': 'money-bill', 'color': '#4CAF50'},
+                {'name': 'Investimentos', 'type': 'income', 'description': 'Rendimentos de investimentos', 'icon': 'chart-line', 'color': '#2196F3'},
+                {'name': 'Presentes', 'type': 'income', 'description': 'Dinheiro recebido como presente', 'icon': 'gift', 'color': '#9C27B0'},
+                {'name': 'Outros (Receita)', 'type': 'income', 'description': 'Outras fontes de receita', 'icon': 'plus-circle', 'color': '#607D8B'},
+                
+                {'name': 'Alimentação', 'type': 'expense', 'description': 'Mercado, restaurantes e delivery', 'icon': 'utensils', 'color': '#F44336'},
+                {'name': 'Moradia', 'type': 'expense', 'description': 'Aluguel, contas e manutenção', 'icon': 'home', 'color': '#FF9800'},
+                {'name': 'Transporte', 'type': 'expense', 'description': 'Combustível, passagens e manutenção', 'icon': 'car', 'color': '#795548'},
+                {'name': 'Lazer', 'type': 'expense', 'description': 'Entretenimento e hobbies', 'icon': 'gamepad', 'color': '#E91E63'},
+                {'name': 'Saúde', 'type': 'expense', 'description': 'Medicamentos, consultas e planos', 'icon': 'heartbeat', 'color': '#00BCD4'},
+                {'name': 'Educação', 'type': 'expense', 'description': 'Cursos, livros e materiais', 'icon': 'graduation-cap', 'color': '#3F51B5'},
+                {'name': 'Compras', 'type': 'expense', 'description': 'Roupas, eletrônicos e outros', 'icon': 'shopping-bag', 'color': '#9E9E9E'},
+                {'name': 'Assinaturas', 'type': 'expense', 'description': 'Serviços recorrentes', 'icon': 'calendar-check', 'color': '#8BC34A'},
+                {'name': 'Outros (Despesa)', 'type': 'expense', 'description': 'Gastos diversos', 'icon': 'minus-circle', 'color': '#607D8B'}
+            ]
+
+            for category_data in default_categories:
+                existing = TransactionCategory.query.filter_by(name=category_data['name']).first()
+                if not existing:
+                    category = TransactionCategory(**category_data)
+                    db.session.add(category)
+            
+            db.session.commit()
+            print("Categorias padrão criadas!")
+
             # Criar um usuário administrador se não existir
             admin_username = os.getenv('ADMIN_USERNAME', 'admin')
             admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')

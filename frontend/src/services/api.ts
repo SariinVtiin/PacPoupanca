@@ -15,11 +15,13 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
+      console.log("Enviando token:", token);
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
+    console.error("Erro ao configurar requisição:", error);
     return Promise.reject(error);
   }
 );
@@ -30,15 +32,17 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Se receber um erro 401 (não autorizado), redireciona para login
-    if (error.response && error.response.status === 401) {
+    console.error("Erro na resposta:", error.response?.status, error.response?.data);
+    
+    // Se receber um erro 401 ou 422 (não autorizado), redireciona para login
+    if (error.response && (error.response.status === 401 || error.response.status === 422)) {
+      console.log("Token inválido ou expirado, redirecionando para login");
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
-
 // Serviços de autenticação
 export const authService = {
   login: async (username: string, password: string) => {
@@ -65,6 +69,39 @@ export const authService = {
     const response = await api.delete('/profile', {
       data: { password }
     });
+    return response.data;
+  }
+};
+
+// Serviços de transações
+export const transactionService = {
+  getCategories: async () => {
+    const response = await api.get('/categories');
+    return response.data;
+  },
+  
+  getTransactions: async (filters = {}) => {
+    const response = await api.get('/transactions', { params: filters });
+    return response.data;
+  },
+  
+  createTransaction: async (transactionData: any) => {
+    const response = await api.post('/transactions', transactionData);
+    return response.data;
+  },
+  
+  updateTransaction: async (id: number, transactionData: any) => {
+    const response = await api.put(`/transactions/${id}`, transactionData);
+    return response.data;
+  },
+  
+  deleteTransaction: async (id: number) => {
+    const response = await api.delete(`/transactions/${id}`);
+    return response.data;
+  },
+  
+  getSummary: async (period: string = 'all') => {
+    const response = await api.get('/summary', { params: { period } });
     return response.data;
   }
 };

@@ -25,9 +25,11 @@ class User(db.Model):
         self.last_login = datetime.utcnow()
         db.session.commit()
     
-    def to_dict(self):
-        """Converter o usuário para um dicionário (útil para API)"""
-        return {
+    transactions = db.relationship('Transaction', backref='user', lazy=True, cascade="all, delete-orphan")
+
+    # E atualize o método to_dict para incluir um resumo de transações:
+    def to_dict(self, include_transactions=False):
+        user_dict = {
             'id': self.id,
             'username': self.username,
             'email': self.email,
@@ -37,6 +39,20 @@ class User(db.Model):
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'last_login': self.last_login.strftime('%Y-%m-%d %H:%M:%S') if self.last_login else None
         }
+        
+        if include_transactions:
+            # Cálculo de sumário financeiro
+            income = sum(t.amount for t in self.transactions if t.type == 'income')
+            expenses = sum(t.amount for t in self.transactions if t.type == 'expense')
+            balance = income - expenses
+            
+            user_dict['financial_summary'] = {
+                'income': income,
+                'expenses': expenses,
+                'balance': balance
+            }
+        
+        return user_dict
         
     def __repr__(self):
         return f'<User {self.username}>'

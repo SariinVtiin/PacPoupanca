@@ -88,11 +88,13 @@ def login():
     # Atualizar último login
     user.update_last_login()
     
-    # Criar token JWT
+    # Criar token JWT - usar ID como string para garantir compatibilidade
     access_token = create_access_token(
-        identity=user.id,
+        identity=str(user.id),  # Converter para string para garantir compatibilidade
         expires_delta=datetime.timedelta(days=1)
     )
+    
+    print(f"Token gerado para usuário {user.username}, ID: {user.id}")
     
     return jsonify({
         'message': 'Login bem-sucedido',
@@ -105,15 +107,25 @@ def login():
 @api.route('/profile', methods=['GET'])
 @jwt_required()
 def get_profile():
-    # Obter ID do usuário a partir do token JWT
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    
-    if not user:
-        return jsonify({'error': 'Usuário não encontrado'}), 404
-    
-    # Retornar dados do usuário
-    return jsonify(user.to_dict()), 200
+    try:
+        # Obter ID do usuário a partir do token JWT
+        current_user_id = get_jwt_identity()
+        print(f"ID do usuário do token: {current_user_id}")
+        
+        user = User.query.get(current_user_id)
+        
+        if not user:
+            print(f"Usuário não encontrado: {current_user_id}")
+            return jsonify({'error': 'Usuário não encontrado'}), 404
+        
+        # Log para debug
+        print(f"Usuário encontrado: {user.username}, ID: {user.id}")
+        
+        # Retornar dados do usuário
+        return jsonify(user.to_dict()), 200
+    except Exception as e:
+        print(f"Erro ao processar perfil: {str(e)}")
+        return jsonify({'error': f'Erro ao processar perfil: {str(e)}'}), 500
 
 # Update (Atualizar perfil do usuário)
 @api.route('/profile', methods=['PUT'])

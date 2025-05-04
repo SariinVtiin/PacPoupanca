@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/api';
+import { authService, transactionService } from '../services/api';
 import '../assets/css/dashboard.css';
 import axios from 'axios';
 
@@ -10,6 +10,16 @@ import {
   RiUserLine, RiSettings4Line, RiLogoutBoxLine, RiMenuLine, 
   RiSunLine, RiMoonLine 
 } from 'react-icons/ri';
+
+// Definir a interface para o resumo financeiro
+interface FinancialSummary {
+  period: string;
+  income: number;
+  expenses: number;
+  balance: number;
+  income_by_category: Record<string, number>;
+  expense_by_category: Record<string, number>;
+}
 
 interface UserProfile {
   id: number;
@@ -29,10 +39,20 @@ const DashboardPage: React.FC = () => {
   const [error, setError] = useState('');
   const [menuCollapsed, setMenuCollapsed] = useState(true);
   const [darkTheme, setDarkTheme] = useState(true);
+  // Adicionar o estado para o resumo financeiro
+  const [financialSummary, setFinancialSummary] = useState<FinancialSummary | null>(null);
+
+  // Função para formatar moeda
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
 
   useEffect(() => {
-    // Buscar dados do perfil do usuário ao carregar o componente
-    const fetchUserProfile = async () => {
+    // Buscar dados do perfil do usuário e resumo financeiro
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -40,15 +60,20 @@ const DashboardPage: React.FC = () => {
           return;
         }
 
-        const data = await authService.getProfile();
-        setUserProfile(data);
+        // Buscar perfil
+        const profileData = await authService.getProfile();
+        setUserProfile(profileData);
+        
+        // Buscar resumo financeiro (mensal)
+        const summaryData = await transactionService.getSummary('month');
+        setFinancialSummary(summaryData);
+
         setLoading(false);
       } catch (error) {
-        console.error('Erro ao carregar perfil:', error);
+        console.error('Erro ao carregar dados:', error);
         setError('Erro ao carregar informações do usuário');
         setLoading(false);
         
-        // Se for erro de autenticação, redirecionar para login
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           localStorage.removeItem('token');
           navigate('/login');
@@ -68,7 +93,7 @@ const DashboardPage: React.FC = () => {
       setMenuCollapsed(savedMenuState === 'true');
     }
 
-    fetchUserProfile();
+    fetchData();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -131,11 +156,11 @@ const DashboardPage: React.FC = () => {
         <div className={`sidebar ${menuCollapsed ? 'collapsed' : ''}`}>
           <nav>
             <ul>
-              <li className="active">
+              <li className="active" onClick={() => navigate('/dashboard')}>
                 <span className="menu-icon"><RiDashboardLine /></span>
                 <span className="menu-text">Dashboard</span>
               </li>
-              <li>
+              <li onClick={() => navigate('/transactions')}>
                 <span className="menu-icon"><RiExchangeDollarLine /></span>
                 <span className="menu-text">Transações</span>
               </li>
@@ -170,23 +195,29 @@ const DashboardPage: React.FC = () => {
               <div className="stat-icon money-icon"></div>
               <div className="stat-content">
                 <h3>Saldo Atual</h3>
-                <p className="stat-value">R$ 0,00</p>
+                <p className="stat-value">
+                  {financialSummary ? formatCurrency(financialSummary.balance) : 'R$ 0,00'}
+                </p>
               </div>
             </div>
             
             <div className="stat-card">
               <div className="stat-icon savings-icon"></div>
               <div className="stat-content">
-                <h3>Economias</h3>
-                <p className="stat-value">R$ 0,00</p>
+                <h3>Receitas</h3>
+                <p className="stat-value">
+                  {financialSummary ? formatCurrency(financialSummary.income) : 'R$ 0,00'}
+                </p>
               </div>
             </div>
             
             <div className="stat-card">
               <div className="stat-icon expenses-icon"></div>
               <div className="stat-content">
-                <h3>Gastos</h3>
-                <p className="stat-value">R$ 0,00</p>
+                <h3>Despesas</h3>
+                <p className="stat-value">
+                  {financialSummary ? formatCurrency(financialSummary.expenses) : 'R$ 0,00'}
+                </p>
               </div>
             </div>
           </div>
