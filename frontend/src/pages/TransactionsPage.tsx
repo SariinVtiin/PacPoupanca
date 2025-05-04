@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { transactionService } from '../services/api';
 import { Transaction, Category } from '../types/transaction.types';
 import '../assets/css/transactions.css';
-import { RiAddLine, RiDeleteBin6Line, RiEdit2Line, RiFilterLine } from 'react-icons/ri';
+// No início do arquivo TransactionsPage.tsx
+import { 
+  AddIcon, FilterIcon, EditIcon, DeleteIcon 
+} from '../components/icons';
 
 const TransactionsPage: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -229,14 +232,14 @@ const TransactionsPage: React.FC = () => {
           className="add-transaction-btn" 
           onClick={() => { setShowForm(!showForm); setFormMode('create'); }}
         >
-          {showForm ? 'Cancelar' : 'Nova Transação'} <RiAddLine />
+          {showForm ? 'Cancelar' : 'Nova Transação'} <AddIcon />
         </button>
         
         <button 
           className="filter-btn" 
           onClick={() => setShowFilters(!showFilters)}
         >
-          Filtros <RiFilterLine />
+          Filtros <AddIcon />
         </button>
       </div>
       
@@ -414,7 +417,7 @@ const TransactionsPage: React.FC = () => {
               className="add-transaction-btn" 
               onClick={() => { setShowForm(true); setFormMode('create'); }}
             >
-              Adicionar Primeira Transação <RiAddLine />
+              Adicionar Primeira Transação <AddIcon />
             </button>
           </div>
         ) : (
@@ -448,13 +451,13 @@ const TransactionsPage: React.FC = () => {
                       className="edit-btn" 
                       onClick={() => editTransaction(transaction)}
                     >
-                      <RiEdit2Line />
+                      <AddIcon  />
                     </button>
                     <button 
                       className="delete-btn" 
                       onClick={() => transaction.id && deleteTransaction(transaction.id)}
                     >
-                      <RiDeleteBin6Line />
+                      <AddIcon  />
                     </button>
                   </div>
                 </div>

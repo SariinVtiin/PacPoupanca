@@ -4,12 +4,10 @@ import { authService, transactionService } from '../services/api';
 import '../assets/css/dashboard.css';
 import axios from 'axios';
 
-// Ícones para o menu
 import { 
-  RiDashboardLine, RiExchangeDollarLine, RiTrophyLine, 
-  RiUserLine, RiSettings4Line, RiLogoutBoxLine, RiMenuLine, 
-  RiSunLine, RiMoonLine 
-} from 'react-icons/ri';
+  MenuIcon, DashboardIcon, TransactionIcon, TrophyIcon,
+  UserIcon, SettingsIcon, LogoutIcon, SunIcon, MoonIcon
+} from '../components/icons';
 
 // Definir a interface para o resumo financeiro
 interface FinancialSummary {
@@ -134,46 +132,48 @@ const DashboardPage: React.FC = () => {
         <div className="ghost"></div>
       </div>
       
+      {/* Cabeçalho do dashboard */}
       <header className="dashboard-header">
         <div className="menu-toggle" onClick={toggleMenu}>
-          <RiMenuLine />
+          <MenuIcon /> 
         </div>
         <div className="logo">
-          <h1>Pac-Poupança</h1>
+          <h1>Pac Poupança</h1>
         </div>
         <div className="user-menu">
           <div className="theme-toggle" onClick={toggleTheme}>
-            {darkTheme ? <RiSunLine /> : <RiMoonLine />}
+            {darkTheme ? <SunIcon /> : <MoonIcon />}
           </div>
           <span>Olá, {userProfile?.username || 'Usuário'}!</span>
           <button onClick={handleLogout} className="logout-btn">
-            <RiLogoutBoxLine /> Sair
+            <LogoutIcon /> Sair
           </button>
         </div>
       </header>
-
+          
+      {/* Conteúdo principal do dashboard */}
       <div className="dashboard-main">
         <div className={`sidebar ${menuCollapsed ? 'collapsed' : ''}`}>
           <nav>
             <ul>
               <li className="active" onClick={() => navigate('/dashboard')}>
-                <span className="menu-icon"><RiDashboardLine /></span>
+                <span className="menu-icon"><DashboardIcon /></span>
                 <span className="menu-text">Dashboard</span>
               </li>
               <li onClick={() => navigate('/transactions')}>
-                <span className="menu-icon"><RiExchangeDollarLine /></span>
+                <span className="menu-icon"><TransactionIcon /></span>
                 <span className="menu-text">Transações</span>
               </li>
               <li>
-                <span className="menu-icon"><RiTrophyLine /></span>
+                <span className="menu-icon"><TrophyIcon /></span>
                 <span className="menu-text">Desafios</span>
               </li>
               <li>
-                <span className="menu-icon"><RiUserLine /></span>
+                <span className="menu-icon"><UserIcon /></span>
                 <span className="menu-text">Perfil</span>
               </li>
               <li>
-                <span className="menu-icon"><RiSettings4Line /></span>
+                <span className="menu-icon"><SettingsIcon /></span>
                 <span className="menu-text">Configurações</span>
               </li>
             </ul>
@@ -181,7 +181,6 @@ const DashboardPage: React.FC = () => {
         </div>
 
         <div className={`main-content ${menuCollapsed ? 'expanded' : ''}`}>
-          <h1>Dashboard</h1>
           
           {error && <div className="error-message">{error}</div>}
           
