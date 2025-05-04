@@ -31,6 +31,8 @@
 }
 
 .auth-header h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.3rem;
   color: var(--pacman-yellow);
   margin-bottom: 1rem;
 }

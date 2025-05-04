@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
     <div className="auth-container">
       <div className="auth-form-container">
         <div className="auth-header">
-          <h1>Pac-Poupança</h1>
+          <h1>Pac Poupança</h1>
           <div 
             className="auth-image-container" 
             onClick={handleBackToHome}
@@ -67,9 +67,7 @@ const LoginPage: React.FC = () => {
         
         </div>
         </div>
-        
-        <h2>Login</h2>
-        
+               
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit} className="auth-form">

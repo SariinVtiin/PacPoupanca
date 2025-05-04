@@ -156,9 +156,7 @@ const RegisterPage: React.FC = () => {
             <img src="/assets/images/pac-man.gif" alt="Pac-Poupança Animation" />
           </div>
         </div>
-        
-        <h2>Cadastro</h2>
-        
+               
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
         

@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { transactionService } from '../services/api';
 import { Transaction, Category } from '../types/transaction.types';
 import '../assets/css/transactions.css';
-// No início do arquivo TransactionsPage.tsx
+import axios from 'axios';
+
+// Ícones dos menus e funções
 import { 
-  AddIcon, FilterIcon, EditIcon, DeleteIcon 
+  AddIcon, FilterIcon, EditIcon, DeleteIcon, 
+  MenuIcon, DashboardIcon, TransactionIcon, TrophyIcon,
+  UserIcon, SettingsIcon, LogoutIcon, SunIcon, MoonIcon
 } from '../components/icons';
 
 const TransactionsPage: React.FC = () => {
+  const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,9 +34,25 @@ const TransactionsPage: React.FC = () => {
     period: 'all'
   });
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Estados para o navbar e sidebar
+  const [menuCollapsed, setMenuCollapsed] = useState(true);
+  const [darkTheme, setDarkTheme] = useState(true);
 
   // Carregar categorias e transações
   useEffect(() => {
+    // Verificar preferência de tema no localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setDarkTheme(savedTheme === 'dark');
+    }
+
+    // Verificar estado do menu no localStorage
+    const savedMenuState = localStorage.getItem('menuCollapsed');
+    if (savedMenuState) {
+      setMenuCollapsed(savedMenuState === 'true');
+    }
+    
     const fetchData = async () => {
       try {
         // Buscar categorias
@@ -42,13 +64,41 @@ const TransactionsPage: React.FC = () => {
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
         setError('Erro ao carregar dados. Por favor, tente novamente.');
+        
+        // Se for erro de autenticação, redirecionar para login
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
       } finally {
         setLoading(false);
       }
     };
     
     fetchData();
-  }, []);
+  }, [navigate]);
+
+  // Toggle do menu lateral
+  const toggleMenu = () => {
+    const newState = !menuCollapsed;
+    setMenuCollapsed(newState);
+    localStorage.setItem('menuCollapsed', newState.toString());
+  };
+
+  // Toggle do tema
+  const toggleTheme = () => {
+    const newTheme = !darkTheme;
+    setDarkTheme(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+  };
+
+  // Logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+    navigate('/');
+  };
 
   // Buscar transações com filtros
   const fetchTransactions = async () => {
@@ -111,7 +161,7 @@ const TransactionsPage: React.FC = () => {
     
     // Converte o valor para número nos campos numéricos
     if (name === 'amount' || name === 'category_id') {
-      processedValue = name === 'amount' ? parseFloat(value).toString() : parseInt(value, 10).toString();
+      processedValue = (name === 'amount' ? parseFloat(value) : parseInt(value, 10)).toString();
       
       // Validação para números
       if (isNaN(Number(processedValue))) {
@@ -222,249 +272,309 @@ const TransactionsPage: React.FC = () => {
   };
 
   return (
-    <div className="transactions-container">
-      <h1>Suas Transações</h1>
-      
-      {error && <div className="error-message">{error}</div>}
-      
-      <div className="transactions-header">
-        <button 
-          className="add-transaction-btn" 
-          onClick={() => { setShowForm(!showForm); setFormMode('create'); }}
-        >
-          {showForm ? 'Cancelar' : 'Nova Transação'} <AddIcon />
-        </button>
-        
-        <button 
-          className="filter-btn" 
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          Filtros <AddIcon />
-        </button>
+    <div className={`dashboard-container ${darkTheme ? 'dark-theme' : 'light-theme'}`}>
+      {/* Fantasmas animados de fundo */}
+      <div className="ghost-background">
+        <div className="ghost"></div>
+        <div className="ghost"></div>
+        <div className="ghost"></div>
+        <div className="ghost"></div>
       </div>
       
-      {showFilters && (
-        <div className="filter-container">
-          <div className="filter-row">
-            <div className="filter-group">
-              <label htmlFor="period">Período:</label>
-              <select 
-                id="period" 
-                name="period" 
-                value={filter.period} 
-                onChange={handleFilterChange}
-              >
-                <option value="all">Todos</option>
-                <option value="month">Este mês</option>
-                <option value="week">Esta semana</option>
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label htmlFor="type">Tipo:</label>
-              <select 
-                id="type" 
-                name="type" 
-                value={filter.type} 
-                onChange={handleFilterChange}
-              >
-                <option value="">Todos</option>
-                <option value="income">Receitas</option>
-                <option value="expense">Despesas</option>
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label htmlFor="category_id">Categoria:</label>
-              <select 
-                id="category_id" 
-                name="category_id" 
-                value={filter.category_id} 
-                onChange={handleFilterChange}
-              >
-                <option value="">Todas</option>
-                {categories.map(category => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <button className="apply-filter-btn" onClick={applyFilters}>
-              Aplicar Filtros
-            </button>
+      {/* Navbar (igual ao dashboard) */}
+      <header className="dashboard-header">
+        <div className="menu-toggle" onClick={toggleMenu}>
+          <MenuIcon />
+        </div>
+        <div className="logo">
+          <h1>Pac Poupança</h1>
+        </div>
+        <div className="user-menu">
+          <div className="theme-toggle" onClick={toggleTheme}>
+            {darkTheme ? <SunIcon /> : <MoonIcon />}
           </div>
+          <span>Olá, {localStorage.getItem('username') || 'Usuário'}!</span>
+          <button onClick={handleLogout} className="logout-btn">
+            <LogoutIcon /> Sair
+          </button>
         </div>
-      )}
+      </header>
+
+      <div className="dashboard-main">
+        {/* Menu lateral (igual ao dashboard) */}
+        <div className={`sidebar ${menuCollapsed ? 'collapsed' : ''}`}>
+          <nav>
+            <ul>
+              <li onClick={() => navigate('/dashboard')}>
+                <span className="menu-icon"><DashboardIcon /></span>
+                <span className="menu-text">Dashboard</span>
+              </li>
+              <li className="active">
+                <span className="menu-icon"><TransactionIcon /></span>
+                <span className="menu-text">Transações</span>
+              </li>
+              <li>
+                <span className="menu-icon"><TrophyIcon /></span>
+                <span className="menu-text">Desafios</span>
+              </li>
+              <li>
+                <span className="menu-icon"><UserIcon /></span>
+                <span className="menu-text">Perfil</span>
+              </li>
+              <li>
+                <span className="menu-icon"><SettingsIcon /></span>
+                <span className="menu-text">Configurações</span>
+              </li>
+            </ul>
+          </nav>
+        </div>
       
-      {showForm && (
-        <div className="transaction-form-container">
-          <h2>{formMode === 'create' ? 'Nova Transação' : 'Editar Transação'}</h2>
+        {/* Conteúdo principal */}
+        <div className={`main-content ${menuCollapsed ? 'expanded' : ''}`}>
+
           
-          <form onSubmit={handleSubmit} className="transaction-form">
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="type">Tipo:</label>
-                <div className="radio-group">
-                  <label className={`radio-label ${formData.type === 'income' ? 'selected' : ''}`}>
-                    <input 
-                      type="radio" 
-                      name="type" 
-                      value="income" 
-                      checked={formData.type === 'income'}
-                      onChange={handleFormChange} 
-                    />
-                    Receita
-                  </label>
-                  <label className={`radio-label ${formData.type === 'expense' ? 'selected' : ''}`}>
-                    <input 
-                      type="radio" 
-                      name="type" 
-                      value="expense" 
-                      checked={formData.type === 'expense'}
-                      onChange={handleFormChange} 
-                    />
-                    Despesa
-                  </label>
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="date">Data:</label>
-                <input 
-                  type="date" 
-                  id="date" 
-                  name="date" 
-                  value={formData.date}
-                  onChange={handleFormChange}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="description">Descrição:</label>
-                <input 
-                  type="text" 
-                  id="description" 
-                  name="description" 
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  required
-                  placeholder="Ex: Mercado, Salário, etc."
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="amount">Valor:</label>
-                <input 
-                  type="number" 
-                  id="amount" 
-                  name="amount" 
-                  value={formData.amount}
-                  onChange={handleFormChange}
-                  step="0.01"
-                  min="0"
-                  required
-                  placeholder="0,00"
-                />
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="category_id">Categoria:</label>
-                <select 
-                  id="category_id" 
-                  name="category_id" 
-                  value={formData.category_id}
-                  onChange={handleFormChange}
-                  required
-                >
-                  <option value="">Selecione uma categoria</option>
-                  {getFilteredCategories(formData.type as 'income' | 'expense').map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            
-            <div className="form-actions">
-              <button type="button" className="cancel-btn" onClick={resetForm}>
-                Cancelar
-              </button>
-              <button type="submit" className="save-btn" disabled={loading}>
-                {loading ? 'Salvando...' : formMode === 'create' ? 'Adicionar' : 'Atualizar'}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-      
-      <div className="transactions-list">
-        <h2>Histórico de Transações</h2>
-        
-        {loading && !transactions.length ? (
-          <div className="loading-message">Carregando transações...</div>
-        ) : transactions.length === 0 ? (
-          <div className="empty-state">
-            <p>Você ainda não tem transações registradas.</p>
+          {error && <div className="error-message">{error}</div>}
+          
+          <div className="transactions-header">
             <button 
               className="add-transaction-btn" 
-              onClick={() => { setShowForm(true); setFormMode('create'); }}
+              onClick={() => { setShowForm(!showForm); setFormMode('create'); }}
             >
-              Adicionar Primeira Transação <AddIcon />
+              {showForm ? 'Cancelar' : 'Nova Transação'} <AddIcon />
+            </button>
+            
+            <button 
+              className="filter-btn" 
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              Filtros <FilterIcon />
             </button>
           </div>
-        ) : (
-          <div className="transaction-items">
-            {transactions.map(transaction => {
-              const category = getCategoryById(transaction.category_id);
+          
+          {showFilters && (
+            <div className="filter-container">
+              <div className="filter-row">
+                <div className="filter-group">
+                  <label htmlFor="period">Período:</label>
+                  <select 
+                    id="period" 
+                    name="period" 
+                    value={filter.period} 
+                    onChange={handleFilterChange}
+                  >
+                    <option value="all">Todos</option>
+                    <option value="month">Este mês</option>
+                    <option value="week">Esta semana</option>
+                  </select>
+                </div>
+                
+                <div className="filter-group">
+                  <label htmlFor="type">Tipo:</label>
+                  <select 
+                    id="type" 
+                    name="type" 
+                    value={filter.type} 
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">Todos</option>
+                    <option value="income">Receitas</option>
+                    <option value="expense">Despesas</option>
+                  </select>
+                </div>
+                
+                <div className="filter-group">
+                  <label htmlFor="category_id">Categoria:</label>
+                  <select 
+                    id="category_id" 
+                    name="category_id" 
+                    value={filter.category_id} 
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">Todas</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <button className="apply-filter-btn" onClick={applyFilters}>
+                  Aplicar Filtros
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {showForm && (
+            <div className="transaction-form-container">
+              <h2>{formMode === 'create' ? 'Nova Transação' : 'Editar Transação'}</h2>
               
-              return (
-                <div 
-                  key={transaction.id} 
-                  className={`transaction-item ${transaction.type}`}
-                >
-                  <div className="transaction-date">
-                    {formatDate(transaction.date)}
+              <form onSubmit={handleSubmit} className="transaction-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="type">Tipo:</label>
+                    <div className="radio-group">
+                      <label className={`radio-label ${formData.type === 'income' ? 'selected' : ''}`}>
+                        <input 
+                          type="radio" 
+                          name="type" 
+                          value="income" 
+                          checked={formData.type === 'income'}
+                          onChange={handleFormChange} 
+                        />
+                        Receita
+                      </label>
+                      <label className={`radio-label ${formData.type === 'expense' ? 'selected' : ''}`}>
+                        <input 
+                          type="radio" 
+                          name="type" 
+                          value="expense" 
+                          checked={formData.type === 'expense'}
+                          onChange={handleFormChange} 
+                        />
+                        Despesa
+                      </label>
+                    </div>
                   </div>
                   
-                  <div className="transaction-category" style={{ backgroundColor: category?.color }}>
-                    {category?.name}
-                  </div>
-                  
-                  <div className="transaction-description">
-                    {transaction.description}
-                  </div>
-                  
-                  <div className="transaction-amount">
-                    {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
-                  </div>
-                  
-                  <div className="transaction-actions">
-                    <button 
-                      className="edit-btn" 
-                      onClick={() => editTransaction(transaction)}
-                    >
-                      <AddIcon  />
-                    </button>
-                    <button 
-                      className="delete-btn" 
-                      onClick={() => transaction.id && deleteTransaction(transaction.id)}
-                    >
-                      <AddIcon  />
-                    </button>
+                  <div className="form-group">
+                    <label htmlFor="date">Data:</label>
+                    <input 
+                      type="date" 
+                      id="date" 
+                      name="date" 
+                      value={formData.date}
+                      onChange={handleFormChange}
+                      required
+                    />
                   </div>
                 </div>
-              );
-            })}
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="description">Descrição:</label>
+                    <input 
+                      type="text" 
+                      id="description" 
+                      name="description" 
+                      value={formData.description}
+                      onChange={handleFormChange}
+                      required
+                      placeholder="Ex: Mercado, Salário, etc."
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="amount">Valor:</label>
+                    <input 
+                      type="number" 
+                      id="amount" 
+                      name="amount" 
+                      value={formData.amount}
+                      onChange={handleFormChange}
+                      step="0.01"
+                      min="0"
+                      required
+                      placeholder="0,00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="category_id">Categoria:</label>
+                    <select 
+                      id="category_id" 
+                      name="category_id" 
+                      value={formData.category_id}
+                      onChange={handleFormChange}
+                      required
+                    >
+                      <option value="">Selecione uma categoria</option>
+                      {getFilteredCategories(formData.type as 'income' | 'expense').map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="form-actions">
+                  <button type="button" className="cancel-btn" onClick={resetForm}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="save-btn" disabled={loading}>
+                    {loading ? 'Salvando...' : formMode === 'create' ? 'Adicionar' : 'Atualizar'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+          
+          <div className="transactions-list">
+            <h2>Histórico de Transações</h2>
+            
+            {loading && !transactions.length ? (
+              <div className="loading-message">Carregando transações...</div>
+            ) : transactions.length === 0 ? (
+              <div className="empty-state">
+                <p>Você ainda não tem transações registradas.</p>
+                <button 
+                  className="add-transaction-btn" 
+                  onClick={() => { setShowForm(true); setFormMode('create'); }}
+                >
+                  Adicionar Primeira Transação <AddIcon />
+                </button>
+              </div>
+            ) : (
+              <div className="transaction-items">
+                {transactions.map(transaction => {
+                  const category = getCategoryById(transaction.category_id);
+                  
+                  return (
+                    <div 
+                      key={transaction.id} 
+                      className={`transaction-item ${transaction.type}`}
+                    >
+                      <div className="transaction-date">
+                        {formatDate(transaction.date)}
+                      </div>
+                      
+                      <div className="transaction-category" style={{ backgroundColor: category?.color }}>
+                        {category?.name}
+                      </div>
+                      
+                      <div className="transaction-description">
+                        {transaction.description}
+                      </div>
+                      
+                      <div className="transaction-amount">
+                        {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
+                      </div>
+                      
+                      <div className="transaction-actions">
+                        <button 
+                          className="edit-btn" 
+                          onClick={() => editTransaction(transaction)}
+                        >
+                          <EditIcon />
+                        </button>
+                        <button 
+                          className="delete-btn" 
+                          onClick={() => transaction.id && deleteTransaction(transaction.id)}
+                        >
+                          <DeleteIcon />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

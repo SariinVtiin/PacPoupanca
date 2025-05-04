@@ -1,4 +1,7 @@
-/* Cores inspiradas no Pac-Man */
+/* No topo do arquivo - FONTE DIFERNTE SELECIONADA PRINCIPAL*/
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Cores inspiradas no Pac-Man ( font-family: 'Press Start 2P', cursive; ) */
 :root {
   --pacman-yellow: #FFCC00;
   --ghost-red: #FF0000;
@@ -115,7 +118,8 @@ header {
 }
 
 .hero h2 {
-  font-size: 3.5rem;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 2.0rem;
   margin-bottom: 1.5rem;
   color: var(--pacman-yellow);
   text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
@@ -157,10 +161,11 @@ header {
 }
 
 .section-title {
+  font-family: 'Press Start 2P', cursive;
   text-align: center;
   margin-bottom: 3rem;
   color: var(--pacman-yellow);
-  font-size: 2.5rem;
+  font-size: 1.5rem;
 }
 
 .features-grid {
@@ -293,8 +298,9 @@ footer {
 }
 
 .footer-logo {
+  font-family: 'Press Start 2P', cursive;
   color: var(--pacman-yellow);
-  font-size: 1.8rem;
+  font-size: 1.0rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
 }

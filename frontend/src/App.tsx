@@ -1,6 +1,6 @@
 import React, { JSX } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './index.css';
+import '../src/assets/css/landingPage.css';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';

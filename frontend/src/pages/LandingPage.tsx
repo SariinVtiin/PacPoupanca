@@ -41,9 +41,9 @@ const LandingPage: React.FC = () => {
 
     <>
       {/* Header com botão de login no canto superior direito */}
-      <header>
+      <header className="dashboard-header">
         <div className="logo">
-          <h1>Pac-Poupança</h1>
+          <h1>Pac Poupança</h1>
         </div>
         <button className="login-btn" onClick={handleLoginClick}>Entrar</button>
       </header>
@@ -147,7 +147,7 @@ const LandingPage: React.FC = () => {
       
       {/* Footer */}
       <footer>
-        <div className="footer-logo">Pac-Poupança</div>
+        <div className="footer-logo">Pac Poupança</div>
         <button className="cta-btn" onClick={handleRegisterClick}>Comece sua jornada financeira</button>
         <p>© 2025 Pac-Poupança. Transformando finanças em diversão.</p>
       </footer>
