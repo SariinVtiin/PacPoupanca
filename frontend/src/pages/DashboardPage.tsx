@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/api';
-import axios from 'axios';
 import '../assets/css/dashboard.css';
+import axios from 'axios';
+
+// Ícones para o menu
+import { 
+  RiDashboardLine, RiExchangeDollarLine, RiTrophyLine, 
+  RiUserLine, RiSettings4Line, RiLogoutBoxLine, RiMenuLine, 
+  RiSunLine, RiMoonLine 
+} from 'react-icons/ri';
 
 interface UserProfile {
   id: number;
@@ -20,6 +27,8 @@ const DashboardPage: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [menuCollapsed, setMenuCollapsed] = useState(true);
+  const [darkTheme, setDarkTheme] = useState(true);
 
   useEffect(() => {
     // Buscar dados do perfil do usuário ao carregar o componente
@@ -38,17 +47,47 @@ const DashboardPage: React.FC = () => {
         console.error('Erro ao carregar perfil:', error);
         setError('Erro ao carregar informações do usuário');
         setLoading(false);
+        
+        // Se for erro de autenticação, redirecionar para login
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
       }
     };
 
+    // Verificar preferência de tema no localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setDarkTheme(savedTheme === 'dark');
+    }
+
+    // Verificar estado do menu no localStorage
+    const savedMenuState = localStorage.getItem('menuCollapsed');
+    if (savedMenuState) {
+      setMenuCollapsed(savedMenuState === 'true');
+    }
+
     fetchUserProfile();
   }, [navigate]);
-  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('username');
     navigate('/');
+  };
+
+  const toggleMenu = () => {
+    const newState = !menuCollapsed;
+    setMenuCollapsed(newState);
+    localStorage.setItem('menuCollapsed', newState.toString());
+  };
+
+  const toggleTheme = () => {
+    const newTheme = !darkTheme;
+    setDarkTheme(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
   };
 
   if (loading) {
@@ -61,30 +100,62 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${darkTheme ? 'dark-theme' : 'light-theme'}`}>
+      {/* Fantasmas animados de fundo */}
+      <div className="ghost-background">
+        <div className="ghost"></div>
+        <div className="ghost"></div>
+        <div className="ghost"></div>
+        <div className="ghost"></div>
+      </div>
+      
       <header className="dashboard-header">
+        <div className="menu-toggle" onClick={toggleMenu}>
+          <RiMenuLine />
+        </div>
         <div className="logo">
           <h1>Pac-Poupança</h1>
         </div>
         <div className="user-menu">
+          <div className="theme-toggle" onClick={toggleTheme}>
+            {darkTheme ? <RiSunLine /> : <RiMoonLine />}
+          </div>
           <span>Olá, {userProfile?.username || 'Usuário'}!</span>
-          <button onClick={handleLogout} className="logout-btn">Sair</button>
+          <button onClick={handleLogout} className="logout-btn">
+            <RiLogoutBoxLine /> Sair
+          </button>
         </div>
       </header>
 
       <div className="dashboard-main">
-        <div className="sidebar">
+        <div className={`sidebar ${menuCollapsed ? 'collapsed' : ''}`}>
           <nav>
             <ul>
-              <li className="active">Dashboard</li>
-              <li>Transações</li>
-              <li>Desafios</li>
-              <li>Perfil</li>
+              <li className="active">
+                <span className="menu-icon"><RiDashboardLine /></span>
+                <span className="menu-text">Dashboard</span>
+              </li>
+              <li>
+                <span className="menu-icon"><RiExchangeDollarLine /></span>
+                <span className="menu-text">Transações</span>
+              </li>
+              <li>
+                <span className="menu-icon"><RiTrophyLine /></span>
+                <span className="menu-text">Desafios</span>
+              </li>
+              <li>
+                <span className="menu-icon"><RiUserLine /></span>
+                <span className="menu-text">Perfil</span>
+              </li>
+              <li>
+                <span className="menu-icon"><RiSettings4Line /></span>
+                <span className="menu-text">Configurações</span>
+              </li>
             </ul>
           </nav>
         </div>
 
-        <div className="main-content">
+        <div className={`main-content ${menuCollapsed ? 'expanded' : ''}`}>
           <h1>Dashboard</h1>
           
           {error && <div className="error-message">{error}</div>}
@@ -96,18 +167,27 @@ const DashboardPage: React.FC = () => {
           
           <div className="dashboard-stats">
             <div className="stat-card">
-              <h3>Saldo Atual</h3>
-              <p className="stat-value">R$ 0,00</p>
+              <div className="stat-icon money-icon"></div>
+              <div className="stat-content">
+                <h3>Saldo Atual</h3>
+                <p className="stat-value">R$ 0,00</p>
+              </div>
             </div>
             
             <div className="stat-card">
-              <h3>Economias</h3>
-              <p className="stat-value">R$ 0,00</p>
+              <div className="stat-icon savings-icon"></div>
+              <div className="stat-content">
+                <h3>Economias</h3>
+                <p className="stat-value">R$ 0,00</p>
+              </div>
             </div>
             
             <div className="stat-card">
-              <h3>Gastos</h3>
-              <p className="stat-value">R$ 0,00</p>
+              <div className="stat-icon expenses-icon"></div>
+              <div className="stat-content">
+                <h3>Gastos</h3>
+                <p className="stat-value">R$ 0,00</p>
+              </div>
             </div>
           </div>
           
@@ -115,12 +195,18 @@ const DashboardPage: React.FC = () => {
             <h3>Seu Perfil</h3>
             {userProfile && (
               <div className="profile-details">
-                <p><strong>Nome:</strong> {userProfile.full_name}</p>
-                <p><strong>Email:</strong> {userProfile.email}</p>
-                <p><strong>Telefone:</strong> {userProfile.phone}</p>
-                <p><strong>Data de Nascimento:</strong> {userProfile.birth_date}</p>
-                <p><strong>Conta criada em:</strong> {userProfile.created_at}</p>
-                <p><strong>Último login:</strong> {userProfile.last_login || 'Esta é sua primeira vez'}</p>
+                <div className="profile-section">
+                  <p><strong>Nome:</strong> {userProfile.full_name}</p>
+                  <p><strong>Email:</strong> {userProfile.email}</p>
+                </div>
+                <div className="profile-section">
+                  <p><strong>Telefone:</strong> {userProfile.phone}</p>
+                  <p><strong>Data de Nascimento:</strong> {userProfile.birth_date}</p>
+                </div>
+                <div className="profile-section full-width">
+                  <p><strong>Conta criada em:</strong> {userProfile.created_at}</p>
+                  <p><strong>Último login:</strong> {userProfile.last_login || 'Esta é sua primeira vez'}</p>
+                </div>
               </div>
             )}
           </div>
