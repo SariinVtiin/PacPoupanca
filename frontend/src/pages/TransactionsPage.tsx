@@ -5,13 +5,6 @@ import { Transaction, Category } from '../types/transaction.types';
 import '../assets/css/transactions.css';
 import axios from 'axios';
 
-// Ícones dos menus e funções
-import { 
-  AddIcon, FilterIcon, EditIcon, DeleteIcon, 
-  MenuIcon, DashboardIcon, TransactionIcon, TrophyIcon,
-  UserIcon, SettingsIcon, LogoutIcon, SunIcon, MoonIcon
-} from '../components/icons';
-
 const TransactionsPage: React.FC = () => {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -55,8 +48,10 @@ const TransactionsPage: React.FC = () => {
     
     const fetchData = async () => {
       try {
+        console.log("Iniciando busca de categorias e transações...");
         // Buscar categorias
         const categoriesData = await transactionService.getCategories();
+        console.log("Categorias obtidas:", categoriesData);
         setCategories(categoriesData);
         
         // Buscar transações
@@ -121,7 +116,9 @@ const TransactionsPage: React.FC = () => {
         filterParams.start_date = firstDay.toISOString().split('T')[0];
       }
       
+      console.log("Buscando transações com filtros:", filterParams);
       const transactionsData = await transactionService.getTransactions(filterParams);
+      console.log("Transações obtidas:", transactionsData);
       setTransactions(transactionsData);
     } catch (error) {
       console.error("Erro ao buscar transações:", error);
@@ -187,8 +184,10 @@ const TransactionsPage: React.FC = () => {
       setLoading(true);
       
       if (formMode === 'create') {
+        console.log("Criando nova transação:", formData);
         await transactionService.createTransaction(formData);
       } else if (currentTransaction?.id) {
+        console.log("Atualizando transação:", currentTransaction.id, formData);
         await transactionService.updateTransaction(currentTransaction.id, formData);
       }
       
@@ -225,6 +224,7 @@ const TransactionsPage: React.FC = () => {
     
     try {
       setLoading(true);
+      console.log("Excluindo transação:", id);
       await transactionService.deleteTransaction(id);
       await fetchTransactions();
     } catch (error) {
@@ -275,27 +275,27 @@ const TransactionsPage: React.FC = () => {
     <div className={`dashboard-container ${darkTheme ? 'dark-theme' : 'light-theme'}`}>
       {/* Fantasmas animados de fundo */}
       <div className="ghost-background">
-        <div className="ghost"></div>
-        <div className="ghost"></div>
-        <div className="ghost"></div>
-        <div className="ghost"></div>
+        <div className="ghost ghost-red"></div>
+        <div className="ghost ghost-blue"></div>
+        <div className="ghost ghost-pink"></div>
+        <div className="ghost ghost-orange"></div>
       </div>
       
       {/* Navbar (igual ao dashboard) */}
       <header className="dashboard-header">
         <div className="menu-toggle" onClick={toggleMenu}>
-          <MenuIcon />
+          ☰
         </div>
         <div className="logo">
           <h1>Pac Poupança</h1>
         </div>
         <div className="user-menu">
           <div className="theme-toggle" onClick={toggleTheme}>
-            {darkTheme ? <SunIcon /> : <MoonIcon />}
+            {darkTheme ? '☀️' : '🌙'}
           </div>
           <span>Olá, {localStorage.getItem('username') || 'Usuário'}!</span>
           <button onClick={handleLogout} className="logout-btn">
-            <LogoutIcon /> Sair
+            Sair
           </button>
         </div>
       </header>
@@ -306,23 +306,23 @@ const TransactionsPage: React.FC = () => {
           <nav>
             <ul>
               <li onClick={() => navigate('/dashboard')}>
-                <span className="menu-icon"><DashboardIcon /></span>
+                <span className="menu-icon">📊</span>
                 <span className="menu-text">Dashboard</span>
               </li>
               <li className="active">
-                <span className="menu-icon"><TransactionIcon /></span>
+                <span className="menu-icon">💰</span>
                 <span className="menu-text">Transações</span>
               </li>
               <li>
-                <span className="menu-icon"><TrophyIcon /></span>
+                <span className="menu-icon">🏆</span>
                 <span className="menu-text">Desafios</span>
               </li>
               <li>
-                <span className="menu-icon"><UserIcon /></span>
+                <span className="menu-icon">👤</span>
                 <span className="menu-text">Perfil</span>
               </li>
               <li>
-                <span className="menu-icon"><SettingsIcon /></span>
+                <span className="menu-icon">⚙️</span>
                 <span className="menu-text">Configurações</span>
               </li>
             </ul>
@@ -340,14 +340,14 @@ const TransactionsPage: React.FC = () => {
               className="add-transaction-btn" 
               onClick={() => { setShowForm(!showForm); setFormMode('create'); }}
             >
-              {showForm ? 'Cancelar' : 'Nova Transação'} <AddIcon />
+              {showForm ? 'Cancelar' : 'Nova Transação'} {showForm ? '❌' : '➕'}
             </button>
             
             <button 
               className="filter-btn" 
               onClick={() => setShowFilters(!showFilters)}
             >
-              Filtros <FilterIcon />
+              Filtros 🔍
             </button>
           </div>
           
@@ -400,7 +400,7 @@ const TransactionsPage: React.FC = () => {
                 </div>
                 
                 <button className="apply-filter-btn" onClick={applyFilters}>
-                  Aplicar Filtros
+                  Aplicar Filtros ✅
                 </button>
               </div>
             </div>
@@ -423,7 +423,7 @@ const TransactionsPage: React.FC = () => {
                           checked={formData.type === 'income'}
                           onChange={handleFormChange} 
                         />
-                        Receita
+                        Receita 📈
                       </label>
                       <label className={`radio-label ${formData.type === 'expense' ? 'selected' : ''}`}>
                         <input 
@@ -433,7 +433,7 @@ const TransactionsPage: React.FC = () => {
                           checked={formData.type === 'expense'}
                           onChange={handleFormChange} 
                         />
-                        Despesa
+                        Despesa 📉
                       </label>
                     </div>
                   </div>
@@ -517,7 +517,10 @@ const TransactionsPage: React.FC = () => {
             <h2>Histórico de Transações</h2>
             
             {loading && !transactions.length ? (
-              <div className="loading-message">Carregando transações...</div>
+              <div className="loading-message">
+                <div className="loading-spinner"></div>
+                <p>Carregando transações...</p>
+              </div>
             ) : transactions.length === 0 ? (
               <div className="empty-state">
                 <p>Você ainda não tem transações registradas.</p>
@@ -525,7 +528,7 @@ const TransactionsPage: React.FC = () => {
                   className="add-transaction-btn" 
                   onClick={() => { setShowForm(true); setFormMode('create'); }}
                 >
-                  Adicionar Primeira Transação <AddIcon />
+                  Adicionar Primeira Transação ➕
                 </button>
               </div>
             ) : (
@@ -558,14 +561,16 @@ const TransactionsPage: React.FC = () => {
                         <button 
                           className="edit-btn" 
                           onClick={() => editTransaction(transaction)}
+                          title="Editar"
                         >
-                          <EditIcon />
+                          ✏️
                         </button>
                         <button 
                           className="delete-btn" 
                           onClick={() => transaction.id && deleteTransaction(transaction.id)}
+                          title="Excluir"
                         >
-                          <DeleteIcon />
+                          🗑️
                         </button>
                       </div>
                     </div>
