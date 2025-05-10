@@ -439,13 +439,15 @@
   background-color: rgba(255, 153, 204, 0.2);
   border-radius: 15px;
   padding: 1rem;
-  margin-bottom: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   animation: fadeInUp 0.5s ease, pulse 2s infinite;
   position: relative;
   overflow: hidden;
+  z-index: 1; /* Garantir que fique acima do conteúdo normal */
 }
 
 .level-notification::before {
@@ -468,4 +470,15 @@
   margin: 0;
   font-weight: bold;
   color: var(--ghost-pink);
+}
+
+/* Também ajustar a margem superior do main-content para evitar sobreposição */
+.main-content {
+  padding-top: 1.5rem;
+}
+
+/* O mesmo para a notificação de XP */
+.xp-notification {
+  margin-top: 1rem;
+  z-index: 1;
 }
