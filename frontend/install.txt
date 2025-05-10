@@ -1,11 +1,14 @@
-1º Excluir os arquivos .json
+1º Reiniciar e excluir os arquivos .json
+
+npm init -y
+npm install
+npm install react react-dom
+npm install react-router-dom
+npm install --save-dev @types/react @types/react-dom
 
 npm install react-scripts --save
 
 npm install react react-dom
-npm install react-router-dom
-
-npm install --save-dev @types/react @types/react-dom
 
 npm install axios
 
