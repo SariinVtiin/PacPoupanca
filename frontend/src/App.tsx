@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
+import ChallengesPage from './pages/ChallengsPage';  // Importar a nova página
 
 function App() {
   // Verificar se o usuário está autenticado
@@ -37,6 +38,14 @@ function App() {
           element={
             <PrivateRoute>
               <TransactionsPage />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/challenges" 
+          element={
+            <PrivateRoute>
+              <ChallengesPage />
             </PrivateRoute>
           } 
         />

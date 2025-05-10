@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
+
+
 // Criar uma instância do axios
 const api = axios.create({
   baseURL: API_URL,
@@ -105,5 +107,42 @@ export const transactionService = {
     return response.data;
   }
 };
+
+// Adicionar ao arquivo frontend/src/services/api.ts:
+
+// Serviços relacionados a XP, desafios e conquistas
+export const userService = {
+  getUserXP: async () => {
+    const response = await api.get('/user/xp');
+    return response.data;
+  },
+  
+  grantDailyXP: async () => {
+    const response = await api.post('/user/daily-xp');
+    return response.data;
+  },
+  
+  getAchievements: async () => {
+    const response = await api.get('/user/achievements');
+    return response.data;
+  },
+  
+  getChallenges: async () => {
+    const response = await api.get('/challenges');
+    return response.data;
+  },
+
+  recalculateLevel: async () => {
+  const response = await api.post('/user/recalculate-level');
+  return response.data;
+  },
+  
+  getRankings: async () => {
+    const response = await api.get('/rankings');
+    return response.data;
+  }
+};
+
+
 
 export default api;

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService, transactionService } from '../services/api';
+import { authService, transactionService, userService } from '../services/api';
 import '../assets/css/dashboard.css';
 import axios from 'axios';
 import { Transaction, FinancialSummary, Category } from '../types/transaction.types';
-
 // Interface para o perfil do usuário
 interface UserProfile {
   id: number;
@@ -17,6 +16,14 @@ interface UserProfile {
   last_login: string | null;
 }
 
+// Adicionar interface para UserXP
+interface UserXP {
+  xp: number;
+  level: number;
+  next_level_xp: number;
+  last_xp_grant: string | null;
+}
+
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -25,6 +32,9 @@ const DashboardPage: React.FC = () => {
   const [menuCollapsed, setMenuCollapsed] = useState(true);
   const [darkTheme, setDarkTheme] = useState(true);
   
+  const [userXP, setUserXP] = useState<UserXP | null>(null);
+  const [xpMessage, setXpMessage] = useState<string | null>(null);
+
   // Estados para dados reais
   const [financialSummary, setFinancialSummary] = useState<FinancialSummary | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
@@ -51,77 +61,94 @@ const DashboardPage: React.FC = () => {
     '#EC4899', // rosa escuro
   ];
 
-  // Simular XP do usuário (já que ainda não temos API para gamificação)
-  const mockUserXP = {
-    level: 5,
-    xp: 450,
-    next_level_xp: 500
+ 
+  useEffect(() => {  
+  // Buscar dados do perfil do usuário e resumo financeiro
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      setLoading(true);
+
+      // Buscar perfil do usuário
+      console.log("Buscando perfil do usuário...");
+      const profileData = await authService.getProfile();
+      console.log("Perfil obtido:", profileData);
+      setUserProfile(profileData);
+      
+      // Buscar categorias
+      console.log("Buscando categorias...");
+      const categoriesData = await transactionService.getCategories();
+      console.log("Categorias obtidas:", categoriesData);
+      setCategories(categoriesData);
+      
+      // Buscar resumo financeiro (mensal)
+      console.log("Buscando resumo financeiro mensal...");
+      const summaryData = await transactionService.getSummary('month');
+      console.log("Resumo obtido:", summaryData);
+      setFinancialSummary(summaryData);
+      
+      // Buscar transações recentes (últimas 5)
+      console.log("Buscando transações recentes...");
+      const transactionsData = await transactionService.getTransactions({ limit: 5 });
+      console.log("Transações obtidas:", transactionsData);
+      setRecentTransactions(transactionsData);
+
+      // Buscar dados de XP do usuário
+      console.log("Buscando informações de XP...");
+      try {
+        const xpData = await userService.getUserXP();
+        console.log("Dados de XP obtidos:", xpData);
+        setUserXP(xpData);
+        
+        // Verificar se ganha XP por login diário
+        const dailyXpResponse = await userService.grantDailyXP();
+        if (dailyXpResponse.xp_granted) {
+          setXpMessage(`Parabéns! Você ganhou ${dailyXpResponse.xp_granted} XP pelo login diário!`);
+          // Atualizar os dados de XP com os valores mais recentes
+          setUserXP({
+            xp: dailyXpResponse.total_xp,
+            level: dailyXpResponse.level,
+            next_level_xp: dailyXpResponse.next_level_xp,
+            last_xp_grant: new Date().toISOString().split('T')[0]
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados de XP:", error);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      setError('Erro ao carregar informações do usuário');
+      setLoading(false);
+      
+      // Se o erro for de autenticação, redirecionar para login
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
+    }
   };
 
-  useEffect(() => {
-    // Buscar dados do perfil do usuário e resumo financeiro
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/login');
-          return;
-        }
+  // Verificar preferência de tema no localStorage
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    setDarkTheme(savedTheme === 'dark');
+  }
 
-        setLoading(true);
+  // Verificar estado do menu no localStorage
+  const savedMenuState = localStorage.getItem('menuCollapsed');
+  if (savedMenuState) {
+    setMenuCollapsed(savedMenuState === 'true');
+  }
 
-        // Buscar perfil do usuário
-        console.log("Buscando perfil do usuário...");
-        const profileData = await authService.getProfile();
-        console.log("Perfil obtido:", profileData);
-        setUserProfile(profileData);
-        
-        // Buscar categorias
-        console.log("Buscando categorias...");
-        const categoriesData = await transactionService.getCategories();
-        console.log("Categorias obtidas:", categoriesData);
-        setCategories(categoriesData);
-        
-        // Buscar resumo financeiro (mensal)
-        console.log("Buscando resumo financeiro mensal...");
-        const summaryData = await transactionService.getSummary('month');
-        console.log("Resumo obtido:", summaryData);
-        setFinancialSummary(summaryData);
-        
-        // Buscar transações recentes (últimas 5)
-        console.log("Buscando transações recentes...");
-        const transactionsData = await transactionService.getTransactions({ limit: 5 });
-        console.log("Transações obtidas:", transactionsData);
-        setRecentTransactions(transactionsData);
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        setError('Erro ao carregar informações do usuário');
-        setLoading(false);
-        
-        // Se o erro for de autenticação, redirecionar para login
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          localStorage.removeItem('token');
-          navigate('/login');
-        }
-      }
-    };
-
-    // Verificar preferência de tema no localStorage
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setDarkTheme(savedTheme === 'dark');
-    }
-
-    // Verificar estado do menu no localStorage
-    const savedMenuState = localStorage.getItem('menuCollapsed');
-    if (savedMenuState) {
-      setMenuCollapsed(savedMenuState === 'true');
-    }
-
-    fetchData();
-  }, [navigate]);
+  fetchData();
+}, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -191,17 +218,31 @@ const DashboardPage: React.FC = () => {
             {darkTheme ? '☀️' : '🌙'}
           </div>
           <div className="user-level-indicator">
-            <div className="level-badge">Nv {mockUserXP.level}</div>
-            <div className="xp-bar-container">
-              <div 
-                className="xp-bar"
-                style={{ 
-                  width: `${(mockUserXP.xp / mockUserXP.next_level_xp) * 100}%` 
-                }}
-              ></div>
-            </div>
-            <span className="xp-text">{mockUserXP.xp}/{mockUserXP.next_level_xp} XP</span>
+            {userXP ? (
+              <>
+                <div className="level-badge">Nv {userXP.level}</div>
+                <div className="xp-bar-container">
+                  <div 
+                    className="xp-bar"
+                    style={{ 
+                      width: `${(userXP.xp / userXP.next_level_xp) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+                <span className="xp-text">{userXP.xp}/{userXP.next_level_xp} XP</span>
+              </>
+            ) : (
+              <div className="level-badge">Carregando...</div>
+            )}
           </div>
+
+            {xpMessage && (
+              <div className="xp-notification">
+                <div className="xp-icon">⭐</div>
+                <p>{xpMessage}</p>
+              </div>
+            )}
+
           <span className="username">Olá, {userProfile?.username || 'Usuário'}!</span>
           <button onClick={handleLogout} className="logout-btn">
             Sair

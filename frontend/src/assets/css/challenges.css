@@ -1,0 +1,471 @@
+/* Estilos para a página de Desafios e Conquistas */
+.challenges-header {
+  margin-bottom: 2rem;
+}
+
+.challenges-header h1 {
+  color: var(--pacman-yellow);
+  margin-bottom: 0.5rem;
+}
+
+.challenges-header p {
+  color: var(--text-primary);
+  opacity: 0.8;
+}
+
+/* Abas de navegação */
+.challenges-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--pacman-yellow);
+  margin-bottom: 2rem;
+}
+
+.tab {
+  padding: 1rem 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  transition: all 0.3s ease;
+  background-color: var(--bg-tertiary);
+  margin-right: 0.5rem;
+}
+
+.tab:hover {
+  background-color: rgba(255, 204, 0, 0.1);
+}
+
+.tab.active {
+  background-color: var(--pacman-yellow);
+  color: var(--dark-blue);
+  font-weight: bold;
+}
+
+.tab-icon {
+  font-size: 1.5rem;
+}
+
+/* Container para o conteúdo das abas */
+.tab-content {
+  margin-bottom: 2rem;
+}
+
+/* Estilos para a seção de Desafios */
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.challenge-card {
+  background-color: var(--bg-tertiary);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.challenge-card:hover {
+  transform: translateY(-5px);
+}
+
+.challenge-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(to right, var(--ghost-red), var(--ghost-blue), var(--ghost-pink), var(--ghost-orange));
+}
+
+.challenge-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 204, 0, 0.1);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.challenge-content {
+  flex: 1;
+}
+
+.challenge-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--pacman-yellow);
+}
+
+.challenge-content p {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  opacity: 0.8;
+}
+
+.challenge-progress-container {
+  margin-bottom: 1rem;
+}
+
+.challenge-progress-bar {
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.challenge-progress-fill {
+  height: 100%;
+  background-color: var(--ghost-blue);
+  border-radius: 3px;
+}
+
+.challenge-progress-text {
+  text-align: right;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.challenge-reward {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 204, 0, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+}
+
+.xp-icon {
+  font-size: 1.2rem;
+}
+
+/* Estilos para a seção de Conquistas */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.achievement-card {
+  background-color: var(--bg-tertiary);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  opacity: 0.7; /* Conquistas não obtidas são mais opacas */
+}
+
+.achievement-card.achieved {
+  opacity: 1;
+  border: 1px solid var(--pacman-yellow);
+}
+
+.achievement-card:hover {
+  transform: translateY(-5px);
+}
+
+.achievement-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(to right, var(--ghost-pink), var(--pacman-yellow));
+}
+
+.achievement-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 153, 204, 0.1);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.achievement-content {
+  flex: 1;
+}
+
+.achievement-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--ghost-pink);
+}
+
+.achievement-card.achieved .achievement-content h3 {
+  color: var(--pacman-yellow);
+}
+
+.achievement-content p {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  opacity: 0.8;
+}
+
+.achievement-date {
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--pacman-yellow);
+}
+
+.achievement-progress-container {
+  margin-bottom: 1rem;
+}
+
+.achievement-progress-bar {
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.achievement-progress-fill {
+  height: 100%;
+  background-color: var(--ghost-pink);
+  border-radius: 3px;
+}
+
+.achievement-progress-text {
+  text-align: right;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.achievement-reward {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 153, 204, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+}
+
+.achievement-card.achieved .achievement-reward {
+  background-color: rgba(255, 204, 0, 0.1);
+}
+
+/* Estilos para a seção de Rankings */
+.rankings-container {
+  background-color: var(--bg-tertiary);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2rem;
+}
+
+.rankings-container h2 {
+  color: var(--pacman-yellow);
+  margin-bottom: 1.5rem;
+}
+
+.rankings-list {
+  margin-bottom: 1.5rem;
+}
+
+.ranking-header {
+  display: grid;
+  grid-template-columns: 100px 1fr 150px 150px;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--pacman-yellow);
+  font-weight: bold;
+  color: var(--pacman-yellow);
+}
+
+.ranking-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 150px 150px;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.ranking-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.ranking-item.current-user {
+  background-color: rgba(255, 204, 0, 0.1);
+  border-left: 4px solid var(--pacman-yellow);
+}
+
+.ranking-position {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ranking-xp {
+  font-weight: bold;
+  color: var(--pacman-yellow);
+}
+
+.ranking-info {
+  margin-top: 1.5rem;
+  text-align: center;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Seção de dicas para ganhar XP */
+.xp-tips-container {
+  padding: 2rem;
+  border-radius: 15px;
+  background-color: var(--bg-tertiary);
+  margin-bottom: 2rem;
+}
+
+.xp-tips-container h2 {
+  color: var(--pacman-yellow);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.xp-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.xp-tip-card {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.xp-tip-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.xp-tip-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.xp-tip-card h3 {
+  color: var(--ghost-blue);
+  margin-bottom: 0.8rem;
+}
+
+.xp-tip-card p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .challenges-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .ranking-header, .ranking-item {
+    grid-template-columns: 60px 1fr 80px 80px;
+    font-size: 0.9rem;
+  }
+  
+  .challenge-card, .achievement-card {
+    flex-direction: column;
+  }
+  
+  .challenge-icon, .achievement-icon {
+    align-self: center;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Adicionar ao arquivo frontend/src/assets/css/dashboard.css e challenges.css */
+
+/* Botão de recalcular nível */
+.recalculate-level-btn {
+  background: none;
+  border: none;
+  color: var(--pacman-yellow);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recalculate-level-btn:hover {
+  transform: rotate(180deg);
+}
+
+.recalculate-level-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Notificação de nível */
+.level-notification {
+  background-color: rgba(255, 153, 204, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeInUp 0.5s ease, pulse 2s infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.level-notification::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 153, 204, 0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.level-notification .level-icon {
+  font-size: 2rem;
+  color: var(--ghost-pink);
+}
+
+.level-notification p {
+  margin: 0;
+  font-weight: bold;
+  color: var(--ghost-pink);
+}

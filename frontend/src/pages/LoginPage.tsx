@@ -35,6 +35,20 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('userId', data.user_id.toString());
       localStorage.setItem('username', data.username);
       
+      // Armazenar informações de XP, se disponíveis
+      if (data.xp !== undefined && data.level !== undefined) {
+        localStorage.setItem('userXP', JSON.stringify({
+          xp: data.xp,
+          level: data.level,
+          next_level_xp: data.next_level_xp
+        }));
+      }
+      
+      // Se o usuário ganhou XP por login diário, armazenar a mensagem
+      if (data.xp_gained) {
+        localStorage.setItem('xpMessage', data.xp_message);
+      }
+      
       // Redirecionar para o dashboard
       navigate('/dashboard');
     } catch (error) {

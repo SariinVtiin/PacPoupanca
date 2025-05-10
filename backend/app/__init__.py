@@ -1,16 +1,14 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
 import datetime
 
+# Importar extensões do novo arquivo
+from app.extensions import db, jwt
+
 # Carregar variáveis de ambiente
 load_dotenv()
-
-# Inicializar SQLAlchemy
-db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
@@ -30,8 +28,8 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'dev_jwt_secret_key')
     
     # Inicializar extensões
-    jwt = JWTManager(app)
     db.init_app(app)
+    jwt.init_app(app)
     CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
     
     # Adicione manipuladores de erro JWT
@@ -58,15 +56,18 @@ def create_app():
 
     # Importação para garantir que os modelos sejam registrados
     with app.app_context():
+        # Importar modelos aqui para evitar importação circular
         from app.models.user import User
         from app.models.transaction import Transaction, TransactionCategory
         
         # Registrar blueprints
         from app.api.routes import api as api_blueprint
         from app.api.transaction_routes import transaction_api as transaction_api_blueprint
+        from app.api.xp_routes import xp_api as xp_api_blueprint
         
         app.register_blueprint(api_blueprint, url_prefix='/api')
         app.register_blueprint(transaction_api_blueprint, url_prefix='/api')
+        app.register_blueprint(xp_api_blueprint, url_prefix='/api')
 
         try:
             # Criar tabelas se não existirem

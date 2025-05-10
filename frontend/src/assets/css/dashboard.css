@@ -1126,3 +1126,135 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Adicionar ao arquivo frontend/src/assets/css/dashboard.css */
+
+/* Notificação de XP ganho */
+.xp-notification {
+  background-color: rgba(255, 204, 0, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeInUp 0.5s ease, pulse 2s infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-notification::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 204, 0, 0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.xp-notification .xp-icon {
+  font-size: 2rem;
+  color: var(--pacman-yellow);
+}
+
+.xp-notification p {
+  margin: 0;
+  font-weight: bold;
+  color: var(--pacman-yellow);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 204, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 204, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Adicionar ao arquivo frontend/src/assets/css/dashboard.css e challenges.css */
+
+/* Botão de recalcular nível */
+.recalculate-level-btn {
+  background: none;
+  border: none;
+  color: var(--pacman-yellow);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recalculate-level-btn:hover {
+  transform: rotate(180deg);
+}
+
+.recalculate-level-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Notificação de nível */
+.level-notification {
+  background-color: rgba(255, 153, 204, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeInUp 0.5s ease, pulse 2s infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.level-notification::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 153, 204, 0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.level-notification .level-icon {
+  font-size: 2rem;
+  color: var(--ghost-pink);
+}
+
+.level-notification p {
+  margin: 0;
+  font-weight: bold;
+  color: var(--ghost-pink);
+}

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.models.user import User
-from app import db
+from app.extensions import db  # Importar db do arquivo extensions
 import datetime
 import logging
 
@@ -70,6 +70,7 @@ def register():
         return jsonify({'error': 'Erro interno do servidor. Por favor, tente novamente.'}), 500
 
 # Login (Autenticação)
+# Login (Autenticação) com concessão de XP diário
 @api.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -85,6 +86,15 @@ def login():
     if not user or not user.check_password(data['password']):
         return jsonify({'error': 'Nome de usuário ou senha inválidos'}), 401
     
+    # Verificar e conceder XP por login diário
+    xp_gained = False
+    daily_xp_amount = 0
+    
+    today = datetime.datetime.utcnow().date()
+    if user.last_xp_grant != today:
+        # Conceder XP por login diário (50 XP)
+        xp_gained, xp, level, daily_xp_amount = user.grant_daily_login_xp()
+    
     # Atualizar último login
     user.update_last_login()
     
@@ -96,12 +106,23 @@ def login():
     
     print(f"Token gerado para usuário {user.username}, ID: {user.id}")
     
-    return jsonify({
+    response_data = {
         'message': 'Login bem-sucedido',
         'access_token': access_token,
         'user_id': user.id,
-        'username': user.username
-    }), 200
+        'username': user.username,
+        'xp': user.xp,
+        'level': user.level,
+        'next_level_xp': user.get_next_level_xp()
+    }
+    
+    # Adicionar informação sobre XP ganho, se aplicável
+    if xp_gained:
+        response_data['xp_gained'] = True
+        response_data['xp_amount'] = daily_xp_amount
+        response_data['xp_message'] = f"Parabéns! Você ganhou {daily_xp_amount} XP pelo login diário!"
+    
+    return jsonify(response_data), 200
 
 # Read (Obter perfil do usuário)
 @api.route('/profile', methods=['GET'])
